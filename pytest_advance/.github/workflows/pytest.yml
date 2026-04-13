@@ -3,7 +3,7 @@ name: Pytest
 on:
   push:
     branches: ["master"]
-  pull:
+  pull_request:
     branches: ["master"]
 
 jobs:
@@ -14,22 +14,14 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Install
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pytest pytest pytest-cov
-          pytest-html requests
-
-jobs:
-  unit:
-    steps:
-      pytest-html-requests
-
-      - name: Run unit test +reports
+          pip install pytest pytest-cov pytest-html requests
+      - name: Run unit tests + reports
         run: |
           mkdir reports
-          pytest -m unit --junitxml=reports/junit.xml --cov=src --cov-report=term-missing --cov-report=html --html=reports/reprt.html --self-contained-html
-
+          pytest -m unit --junitxml=reports/junit.xml --cov=src --cov-report=term-missing --cov-report=html --html=reports/report.html --self-contained-html
       - name: Upload test report
         uses: actions/upload-artifact@v4
         with:
@@ -42,16 +34,13 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Install
+      - name: Install dependencies
         run: |
-          python -m pip install
-          pip installpytest ptest-cov pytest-html requests
-
-      -  name: Run integration 
-          run: |
-            python -m integration -q
-
+          python -m pip install --upgrade pip
+          pip install pytest pytest-cov pytest-html requests
+      - name: Run integration tests
+        run: |
+          python -m integration -q
